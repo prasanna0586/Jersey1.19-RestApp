@@ -1,0 +1,51 @@
+package com.sample.cors.filter;
+ 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/*import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;*/
+
+
+
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerResponse;
+import com.sun.jersey.spi.container.ContainerResponseFilter;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.ext.Provider;
+
+@Provider
+public class CorsFilter implements ContainerResponseFilter {
+
+	@Override
+	public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse) {
+		System.out.println("CorsFilter entry");
+		responseContext.getHeaders().putSingle("Access-Control-Allow-Origin", "*");
+		responseContext.getHeaders().putSingle("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+		List<String> reqHead = requestContext.getHeaders().get("Access-Control-Request-Headers");
+		if(reqHead != null){
+			responseContext.getHeaders().put("Access-Control-Allow-Headers", new ArrayList<Object>(reqHead));
+		}
+		System.out.println("CorsFilter exit");
+		
+		
+		
+		
+		ResponseBuilder resp = Response.fromResponse(contResp.getResponse());
+        resp.header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+ 
+        String reqHead = req.getHeaderValue("Access-Control-Request-Headers");
+ 
+        if(null != reqHead && !reqHead.equals("")){
+            resp.header("Access-Control-Allow-Headers", reqHead);
+        }
+ 
+        contResp.setResponse(resp.build());
+            return contResp;
+	}
+}
